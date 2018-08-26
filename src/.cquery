@@ -1,0 +1,11 @@
+%clang
+%%c -std=c99
+%%cpp -std=c++11
+
+# Defined
+-D__AVR_ATmega328PB__
+
+# Includes
+#-I/root/.platformio/packages/framework-arduinoavr/cores/arduino
+-I/root/.platformio/packages/framework-arduinoavr/variants/atmega328pb
+-I/root/.platformio/packages/toolchain-atmelavr/avr/include
