@@ -1,3 +1,6 @@
+#ifndef HARDWARE_H
+#define HARDWARE_H
+
 #include "ad_converter.hpp"
 #include "io_port.hpp"
 
@@ -24,11 +27,17 @@ namespace hardware {
          */
         void configure(DivisionFactor);
     }
+
     enum IOPort_PinMode : uint8_t {
         DigitalInput,
         DigitalOutput,
         DigitalInputWithPullUp,
     };
     const IOPort& getPortB();
+    const IOPort& getPortC();
+    const IOPort& getPortD();
+    const IOPort& getPortE();
     ADConverter* getADConverter();
 }
+
+#endif
