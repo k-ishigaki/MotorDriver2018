@@ -60,8 +60,7 @@ class CLASS_NAME(X) : IOPort {
         }
 
         void write(uint8_t positions, uint8_t outputs) const {
-            PORT(X) |= (positions & outputs);
-            PORT(X) &= (~positions | outputs);
+            PORT(X) = (~positions & PORT(X)) | (positions & outputs);
         }
 
         void toggle(uint8_t positions) const {
