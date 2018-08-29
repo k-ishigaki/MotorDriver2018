@@ -2,25 +2,31 @@
  * Motor Driver 2018
  */
 
+#include "framework/digital_output_pin.hpp"
+#include "framework/digital_input_pin.hpp"
+#include "hardware/hardware.hpp"
+
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include "hardware/hardware.hpp"
-
 using namespace hardware;
 
-const IOPort& portB = getPortB();
+const DigitalOutputPin& pin = DigitalOutputPin(
+        getPortB(),
+        DigitalOutputPin::Bit::B5,
+        io_port::PinMode::DigitalOutput);
+
+const DigitalInputPin& switchPin = DigitalInputPin(
+        getPortD(),
+        DigitalInputPin::Bit::B4,
+        io_port::PinMode::DigitalInputWithPullUp);
 
 void setup() {
     SystemClockPrescaler::configure(SystemClockPrescaler::DivisionFactor::Num1);
-    portB.setPinModes(_BV(5), io_port::PinMode::DigitalOutput);
 }
 
 void loop() {
-    _delay_ms(1000);
-    portB.write(_BV(5), 0xFF);
-    _delay_ms(1000);
-    portB.write(_BV(5), 0x00);
+    pin.write(switchPin.read());
 }
 
 int main() {

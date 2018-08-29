@@ -1,9 +1,9 @@
-#ifndef DIGITAL_INPUT_PIN_H
-#define DIGITAL_INPUT_PIN_H
+#ifndef DIGITAL_OUTPUT_PIN_H
+#define DIGITAL_OUTPUT_PIN_H
 
 #include "../hardware/io_port.hpp"
 
-class DigitalInputPin {
+class DigitalOutputPin {
     public:
         /**
          * Bit position definition.
@@ -20,22 +20,28 @@ class DigitalInputPin {
         };
 
         /**
-         * Digital input pin constructor.
+         * Digital output pin constructor.
          *
          * 3rd param are must be correctly supplied to work correctly.
          *
          * @param port IOPort interface
          * @param bit position for port
-         * @param mode digital input pin mode
+         * @param mode digital output pin mode
          */
-        DigitalInputPin(const IOPort&, Bit, PinMode);
+        DigitalOutputPin(const IOPort&, Bit, PinMode);
+
 
         /**
-         * Read input bit state.
+         * Write output to pin.
          *
-         * @return true if input is HIGH level, false if otherwise
+         * @param true for HIGH level ouput, false for LOW
          */
-        bool read() const;
+        void write(bool) const;
+
+        /**
+         * Toggle output of pin.
+         */
+        void toggle() const;
 
     private:
         const IOPort& port;
