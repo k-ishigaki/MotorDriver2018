@@ -1,11 +1,9 @@
 #ifndef IO_PORT_H
 #define IO_PORT_H
 
-#include <stdint.h>
+#include "hardware_implementation.hpp"
 
-namespace hardware {
-    enum IOPort_PinMode : uint8_t;
-}
+using namespace hardware::io_port;
 
 /**
  * Defines IO Port interfaces.
@@ -48,7 +46,7 @@ class IOPort {
          * @param pin positions
          * @param pin mode
          */
-        virtual void setPinModes(uint8_t, hardware::IOPort_PinMode) const = 0;
+        virtual void setPinModes(uint8_t, PinMode) const = 0;
 
         /**
          * Read levels on the digital input pins.
@@ -57,7 +55,7 @@ class IOPort {
          *
          * @return 1 if high level , else 0 for respective pins
          */
-        virtual uint8_t read(void) const = 0;
+        virtual uint8_t read() const = 0;
 
         /**
          * Write outputs to digital output pins.

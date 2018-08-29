@@ -28,15 +28,18 @@ namespace hardware {
         void configure(DivisionFactor);
     }
 
-    enum IOPort_PinMode : uint8_t {
-        DigitalInput,
-        DigitalOutput,
-        DigitalInputWithPullUp,
-    };
-    const IOPort& getPortB();
-    const IOPort& getPortC();
-    const IOPort& getPortD();
-    const IOPort& getPortE();
+    namespace io_port {
+        enum PinMode : uint8_t {
+            DigitalInput,
+            DigitalOutput,
+            DigitalInputWithPullUp,
+        };
+
+        const IOPort& getPortB();
+        const IOPort& getPortC();
+        const IOPort& getPortD();
+        const IOPort& getPortE();
+    }
     ADConverter* getADConverter();
 }
 

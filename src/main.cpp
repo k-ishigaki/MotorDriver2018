@@ -13,12 +13,14 @@ const IOPort& portB = getPortB();
 
 void setup() {
     SystemClockPrescaler::configure(SystemClockPrescaler::DivisionFactor::Num1);
-    portB.setPinModes(_BV(5), IOPort_PinMode::DigitalOutput);
+    portB.setPinModes(_BV(5), io_port::PinMode::DigitalOutput);
 }
 
 void loop() {
     _delay_ms(1000);
-    portB.toggle(_BV(5));
+    portB.write(_BV(5), 0xFF);
+    _delay_ms(1000);
+    portB.write(_BV(5), 0x00);
 }
 
 int main() {

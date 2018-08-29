@@ -1,9 +1,8 @@
 #include "io_port.hpp"
 #include "hardware.hpp"
-
 #include <avr/io.h>
 
-using namespace hardware;
+using namespace hardware::io_port;
 
 #define JOIN(x, y) JOINX(x, y)
 #define JOINX(x, y) x##y
@@ -39,16 +38,16 @@ using namespace hardware;
 
 class CLASS_NAME(X) : IOPort {
     public:
-        void setPinModes(uint8_t positions, IOPort_PinMode mode) const {
+        void setPinModes(uint8_t positions, PinMode mode) const {
             switch (mode) {
-                case IOPort_PinMode::DigitalOutput:
+                case PinMode::DigitalOutput:
                     DDR(X) |= positions;
                     break;
-                case IOPort_PinMode::DigitalInput:
+                case PinMode::DigitalInput:
                     DDR(X) &= ~positions;
                     PORT(X) &= ~positions;
                     break;
-                case IOPort_PinMode::DigitalInputWithPullUp:
+                case PinMode::DigitalInputWithPullUp:
                     DDR(X) &= ~positions;
                     PORT(X) |= positions;
                     break;
@@ -70,7 +69,7 @@ class CLASS_NAME(X) : IOPort {
         }
 };
 
-const IOPort& hardware::JOIN(get, CLASS_NAME(X))() {
+const IOPort& hardware::io_port::JOIN(get, CLASS_NAME(X))() {
     static CLASS_NAME(X) instance;
     return (IOPort&)instance;
 }
