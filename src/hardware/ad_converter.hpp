@@ -4,10 +4,10 @@
 
 class ADConverter {
     public:
-        virtual void selectInputChannel(void) const = 0;
-        virtual void startConversion(void) const = 0;
-        virtual void isConverting(void) const = 0;
-        virtual uint16_t getResult(void) const = 0;
+        virtual void selectInputChannel() const = 0;
+        virtual void startConversion() const = 0;
+        virtual void isConverting() const = 0;
+        virtual uint16_t getResult() const = 0;
 };
 
 #endif
