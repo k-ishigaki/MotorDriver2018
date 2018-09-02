@@ -1,81 +1,61 @@
 #include "io_port.hpp"
+#include "../device/io_port.hpp"
 #include "hardware.hpp"
-#include <avr/io.h>
 
+using namespace device::io_port;
 using namespace hardware::io_port;
 
-#define JOIN(x, y) JOINX(x, y)
-#define JOINX(x, y) x##y
-
-#define CLASS_NAME(x) JOIN(Port, x)
-
-#define DDR(x) JOIN(DDR, x)
-#define PORT(x) JOIN(PORT, x)
-#define PIN(x) JOIN(PIN, x)
-
-#if !defined(PORTB_DECRARED)
-
-#define PORTB_DECRARED
-#define X B
-
-#elif !defined(PORTC_DECRARED)
-
-#define PORTC_DECRARED
-#define X C
-
-#elif !defined(PORTD_DECRARED)
-
-#define PORTD_DECRARED
-#define X D
-
-#elif !defined(PORTE_DECRARED)
-
-#define PORTE_DECRARED
-#define X E
-
-#define EXIT_LOOP
-#endif
-
-class CLASS_NAME(X) : IOPort {
+template<uint8_t offset> class IOPort_ : IOPort {
+    using regs = io_port_t<offset>;
     public:
+        static IOPort& getInstance() {
+            static IOPort_<offset> instance;
+            return instance;
+        }
+
         void setPinModes(uint8_t positions, PinMode mode) const {
             switch (mode) {
                 case PinMode::DigitalOutput:
-                    DDR(X) |= positions;
+                    regs::DDR |= positions;
                     break;
                 case PinMode::DigitalInput:
-                    DDR(X) &= ~positions;
-                    PORT(X) &= ~positions;
+                    regs::DDR &= ~positions;
+                    regs::PORT &= ~positions;
                     break;
                 case PinMode::DigitalInputWithPullUp:
-                    DDR(X) &= ~positions;
-                    PORT(X) |= positions;
+                    regs::DDR &= ~positions;
+                    regs::PORT |= positions;
                     break;
             }
         }
 
         uint8_t read() const {
-            return PIN(X);
+            return regs::PIN;
         }
 
         void write(uint8_t positions, uint8_t outputs) const {
-            PORT(X) = (~positions & PORT(X)) | (positions & outputs);
+            regs::PORT = (~positions & regs::PORT) | (positions & outputs);
         }
 
         void toggle(uint8_t positions) const {
             // Writing a '1' to PINxn toggles the value of PORTxn,
             // independent on the value of DDRxn
-            PIN(X) |= positions;
+            regs::PIN |= positions;
         }
 };
 
-const IOPort& hardware::io_port::JOIN(get, CLASS_NAME(X))() {
-    static CLASS_NAME(X) instance;
-    return (IOPort&)instance;
+const IOPort& hardware::io_port::getB() {
+    return IOPort_<0x00>::getInstance();
 }
 
-#undef X
+const IOPort& hardware::io_port::getC() {
+    return IOPort_<0x03>::getInstance();
+}
 
-#if !defined(EXIT_LOOP)
-#include "io_port.cpp"
-#endif
+const IOPort& hardware::io_port::getD() {
+    return IOPort_<0x06>::getInstance();
+}
+
+const IOPort& hardware::io_port::getE() {
+    return IOPort_<0x09>::getInstance();
+}

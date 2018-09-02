@@ -7,7 +7,7 @@ namespace hardware {
     namespace SystemClockPrescaler {
         void configure(DivisionFactor factor) {
             CLKPR = _BV(CLKPCE);
-            CLKPR = factor;
+            CLKPR = static_cast<uint8_t>(factor);
         }
     }
 
@@ -15,3 +15,16 @@ namespace hardware {
 //}
 
 }
+
+template<class Fn> void hardware::doWithoutInterrupts(const Fn function) {
+    if (SREG & _BV(SREG_I)) {
+        // disables a global interrupt
+        SREG &= ~_BV(SREG_I);
+        function();
+        // reenables a global interrupt
+        SREG |= _BV(SREG_I);
+    } else {
+        function();
+    }
+}
+

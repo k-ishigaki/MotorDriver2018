@@ -3,13 +3,14 @@
 
 #include "ad_converter.hpp"
 #include "io_port.hpp"
+#include "usart.hpp"
 
 namespace hardware {
     namespace SystemClockPrescaler {
         /**
          * Division Factor for system clock prescaler.
          */
-        enum DivisionFactor {
+        enum class DivisionFactor {
             Num1 = 0b0000,
             Num2 = 0b0001,
             Num4 = 0b0010,
@@ -29,16 +30,57 @@ namespace hardware {
     }
 
     namespace io_port {
-        enum PinMode : uint8_t {
+        enum class PinMode : uint8_t {
             DigitalInput,
             DigitalOutput,
             DigitalInputWithPullUp,
         };
 
-        const IOPort& getPortB();
-        const IOPort& getPortC();
-        const IOPort& getPortD();
-        const IOPort& getPortE();
+        const IOPort& getB();
+        const IOPort& getC();
+        const IOPort& getD();
+        const IOPort& getE();
+    }
+
+    namespace usart {
+        enum class Error : error_flag_t {
+
+        };
+
+        enum class Mode : uint8_t {
+            Asynchronous = 0b00,
+            Synchronous = 0b01,
+        };
+
+        enum class ParityMode : uint8_t {
+            Disabled = 0b00,
+            EvenParity = 0b10,
+            OddParity = 0b11,
+        };
+
+        enum class StopBitSize : uint8_t {
+            Bit1 = 0b0,
+            Bit2 = 0b1,
+        };
+
+        enum class CharacterSize : uint8_t {
+            Bit5 = 0b000,
+            Bit6 = 0b001,
+            Bit7 = 0b010,
+            Bit8 = 0b011,
+            Bit9 = 0b111,
+        };
+
+        struct Config {
+            baudrate_size_t baudrate;
+            Mode mode;
+            ParityMode parityMode;
+            StopBitSize stopBitSize;
+            CharacterSize characterSize;
+        };
+
+        const USART& get0(const Config&);
+        const USART& get1(const Config&);
     }
     ADConverter* getADConverter();
 }
