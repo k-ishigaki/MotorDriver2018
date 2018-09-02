@@ -1,5 +1,5 @@
 /**
- * Motor DrivegetDgetDr 2018
+ * Motor Driver 2018
  */
 
 #include "framework/digital_output_pin.hpp"
