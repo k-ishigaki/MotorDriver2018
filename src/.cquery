@@ -10,3 +10,5 @@
 #-I/root/.platformio/packages/framework-arduinoavr/cores/arduino
 -I/root/.platformio/packages/framework-arduinoavr/variants/atmega328pb
 -I/root/.platformio/packages/toolchain-atmelavr/avr/include
+
+-Wno-unknown-attributes
