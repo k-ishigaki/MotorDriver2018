@@ -5,7 +5,7 @@
 
 class InterruptHandler {
     public:
-        virtual void handleInterrupt() const = 0;
+        virtual void handleInterrupt() = 0;
 };
 
 class Interrupt {
@@ -20,7 +20,7 @@ class Interrupt {
          *
          * @param interrupt handler
          */
-        virtual void registerHandler(const InterruptHandler*) = 0;
+        virtual void registerHandler(InterruptHandler*) = 0;
 
         /**
          * Enable the interrupt.

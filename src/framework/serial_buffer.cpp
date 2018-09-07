@@ -1,21 +1,48 @@
 #include "serial_buffer.hpp"
 
-class RingBuffer {
-    RingBuffer(SerialBuffer::BufferSize size) {
-    }
-    void push(const uint8_t data) const {
-    }
-
-    const uint8_t pop() const {
-        return 0;
-    }
-};
-
-SerialBuffer::SerialBuffer(BufferSize size, const USART& usart, const Interrupt& interrupt)
-    : size(static_cast<uint8_t>(size)), usart(usart), interrupt(interrupt) {
-        this->buffer = new uint8_t[this->size];
-        this->interrupt.enable();
+SerialBuffer::SerialBuffer(RingBuffer::Size size, const USART& usart, const Interrupt& receiveInterrupt, const Interrupt& transmitInterrupt)
+    : usart(usart),
+    receiveInterrupt(receiveInterrupt),
+    transmitInterrupt(transmitInterrupt) {
+        this->transmitBuffer = new RingBuffer(size);
+        this->receiveBuffer = new RingBuffer(size);
+        this->receiveInterrupt.enable();
 }
 
-void SerialBuffer::write(uint8_t data) const {
+void SerialBuffer::write(uint8_t data) {
+    if (this->usart.isTransmitBufferEmpty() == true) {
+        this->usart.write(data);
+        this->transmitInterrupt.enable();
+        return;
+    }
+    this->transmitBuffer->push(data);
+    return;
+}
+
+uint8_t SerialBuffer::getReceivedCount() const {
+    return this->receiveBuffer->getAvailableSize();
+}
+
+uint8_t SerialBuffer::read() {
+    if (this->receiveBuffer->getAvailableSize() == 0) {
+        return 0;
+    }
+    return this->receiveBuffer->pop();
+}
+
+SerialBuffer::ReceiveHandler::ReceiveHandler(SerialBuffer* outer) { this->outer = outer; }
+
+void SerialBuffer::ReceiveHandler::handleInterrupt() {
+    uint8_t result = this->outer->usart.read();
+    this->outer->receiveBuffer->push(result);
+}
+
+SerialBuffer::TransmitHandler::TransmitHandler(SerialBuffer* outer) { this->outer = outer; }
+
+void SerialBuffer::TransmitHandler::handleInterrupt() {
+    if (this->outer->transmitBuffer->getAvailableSize() == 0) {
+        this->outer->transmitInterrupt.disable();
+        return;
+    }
+    this->outer->usart.write(this->outer->transmitBuffer->pop());
 }

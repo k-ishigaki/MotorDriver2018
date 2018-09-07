@@ -15,7 +15,7 @@ template<class T> class Interrupt_ : public Interrupt {
             return instance;
         }
 
-        void registerHandler(const InterruptHandler* handler) {
+        void registerHandler(InterruptHandler* handler) {
             this->handler = handler;
         }
 
@@ -23,12 +23,12 @@ template<class T> class Interrupt_ : public Interrupt {
 
         void disable() const { reg::EI = 0; }
 
-        void handleInterrupt() const {
+        void handleInterrupt() {
             if (handler != nullptr) { handler->handleInterrupt(); }
         }
             
     private:
-        const InterruptHandler* handler = nullptr;
+        InterruptHandler* handler = nullptr;
 };
 
 ISR(USART0_TX_vect) { Interrupt_<tx0_t>::getInstance().handleInterrupt(); }

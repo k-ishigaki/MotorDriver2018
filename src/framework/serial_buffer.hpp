@@ -1,18 +1,13 @@
 #ifndef FRAMEFORK_SERIAL_BUFFER_H
 #define FRAMEFORK_SERIAL_BUFFER_H
 
+#include "../basic/ring_buffer.hpp"
 #include "../hardware/usart.hpp"
 #include "../hardware/interrupt.hpp"
 
 
 class SerialBuffer {
     public:
-        enum class BufferSize : uint8_t {
-            D64  = 0b00111111,
-            D128 = 0b01111111,
-            D256 = 0b11111111,
-        };
-
         /**
          * Serial Buffer constructor.
          *
@@ -21,8 +16,10 @@ class SerialBuffer {
          * The buffer size is same between receiver and transmitter.
          * @param USART interface<br>
          * The transmit/receive buffer size must be configured as 8bit.
+         * @param receive interrupt interface
+         * @param transmit interrupt interface
          */
-        SerialBuffer(BufferSize, const USART&, const Interrupt&);
+        SerialBuffer(RingBuffer::Size, const USART&, const Interrupt&, const Interrupt&);
 
         /**
          * Write to a transmit buffer.
@@ -32,7 +29,7 @@ class SerialBuffer {
          *
          * @param data will be written to transmit buffer
          */
-        void write(const uint8_t) const;
+        void write(const uint8_t);
 
         /**
          * Get a received count from a receive buffer.
@@ -52,13 +49,28 @@ class SerialBuffer {
          * @return one byte data from a receive buffer<br>
          * If no data exists in the buffer, the return value is not specified.
          */
-        uint8_t read() const;
+        uint8_t read();
 
     private:
-        const uint8_t* buffer;
-        const uint8_t size;
+        class ReceiveHandler : public InterruptHandler {
+            public:
+                ReceiveHandler(SerialBuffer*);
+                void handleInterrupt();
+            private:
+                SerialBuffer* outer;
+        };
+        class TransmitHandler : public InterruptHandler {
+            public:
+                TransmitHandler(SerialBuffer*);
+                void handleInterrupt();
+            private:
+                SerialBuffer* outer;
+        };
+        RingBuffer* receiveBuffer;
+        RingBuffer* transmitBuffer;
         const USART& usart;
-        const Interrupt& interrupt;
+        const Interrupt& receiveInterrupt;
+        const Interrupt& transmitInterrupt;
 };
 
 #endif
