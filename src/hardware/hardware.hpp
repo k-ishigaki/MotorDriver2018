@@ -2,6 +2,7 @@
 #define HARDWARE_H
 
 #include "ad_converter.hpp"
+#include "interrupt.hpp"
 #include "io_port.hpp"
 #include "usart.hpp"
 
@@ -27,6 +28,13 @@ namespace hardware {
          * @param one of {@link Hardware#SystemClockPrescaler#DivisionFactor}
          */
         void configure(DivisionFactor);
+    }
+
+    namespace interrupt {
+        const Interrupt& getTx0();
+        const Interrupt& getTx1();
+        const Interrupt& getRx0();
+        const Interrupt& getRx1();
     }
 
     namespace io_port {

@@ -1,5 +1,6 @@
 #include "hardware.hpp"
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 extern ADConverter* getADConverter();
 
@@ -19,10 +20,10 @@ namespace hardware {
 template<class Fn> void hardware::doWithoutInterrupts(const Fn function) {
     if (SREG & _BV(SREG_I)) {
         // disables a global interrupt
-        SREG &= ~_BV(SREG_I);
+        cli();
         function();
         // reenables a global interrupt
-        SREG |= _BV(SREG_I);
+        sei();
     } else {
         function();
     }
