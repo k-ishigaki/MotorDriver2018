@@ -20,7 +20,7 @@ class Interrupt {
          *
          * @param interrupt handler
          */
-        virtual void registerHandler(const InterruptHandler&) const = 0;
+        virtual void registerHandler(const InterruptHandler*) = 0;
 
         /**
          * Enable the interrupt.

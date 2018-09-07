@@ -9,7 +9,7 @@ namespace device {
             : public register_t<addr_, uint8_t> {
                 static constexpr uint8_t addr = addr_;
                 static constexpr Bitpos pos = pos_;
-                bits_t<register_t<addr_, uint8_t>, pos_, 1> EI;
+                static bits_t<register_t<addr_, uint8_t>, pos_, 1> EI;
             };
 
         template<uint8_t offset> struct tx_t
