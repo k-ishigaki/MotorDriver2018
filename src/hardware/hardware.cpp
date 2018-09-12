@@ -12,20 +12,8 @@ namespace hardware {
         }
     }
 
-//ADConverter& Hardware::getADConverter() {
-//}
-
 }
 
-template<class Fn> void hardware::doWithoutInterrupts(const Fn function) {
-    if (SREG & _BV(SREG_I)) {
-        // disables a global interrupt
-        cli();
-        function();
-        // reenables a global interrupt
-        sei();
-    } else {
-        function();
-    }
-}
-
+bool hardware::impl::isInterruptEnable() { return SREG & _BV(SREG_I); }
+void hardware::diableGlobalInterrupt() { cli(); }
+void hardware::enableGlobalInterrupt() { sei(); }

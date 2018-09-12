@@ -23,6 +23,13 @@ class Interrupt {
         virtual void registerHandler(InterruptHandler*) = 0;
 
         /**
+         * Check if the interrupt is enabled.
+         *
+         * @return true if enabled, false otherwise
+         */
+        virtual bool isEnable() const = 0;
+
+        /**
          * Enable the interrupt.
          *
          * This method must be called after calling

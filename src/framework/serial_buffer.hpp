@@ -19,7 +19,7 @@ class SerialBuffer {
          * @param receive interrupt interface
          * @param transmit interrupt interface
          */
-        SerialBuffer(RingBuffer::Size, const USART&, const Interrupt&, const Interrupt&);
+        SerialBuffer(RingBuffer::Size, const USART&, Interrupt&, Interrupt&);
 
         /**
          * Write to a transmit buffer.
@@ -38,7 +38,7 @@ class SerialBuffer {
          *
          * @return data count in a receive buffer
          */
-        uint8_t getReceivedCount() const;
+        uint8_t getReceivedCount();
 
         /**
          * Read from a receive buffer.
@@ -69,8 +69,8 @@ class SerialBuffer {
         RingBuffer* receiveBuffer;
         RingBuffer* transmitBuffer;
         const USART& usart;
-        const Interrupt& receiveInterrupt;
-        const Interrupt& transmitInterrupt;
+        Interrupt& receiveInterrupt;
+        Interrupt& transmitInterrupt;
 };
 
 #endif

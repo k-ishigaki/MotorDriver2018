@@ -1,6 +1,8 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#include "hardware_implementation.hpp"
+
 #include "ad_converter.hpp"
 #include "interrupt.hpp"
 #include "io_port.hpp"
@@ -31,10 +33,10 @@ namespace hardware {
     }
 
     namespace interrupt {
-        const Interrupt& getTx0();
-        const Interrupt& getTx1();
-        const Interrupt& getRx0();
-        const Interrupt& getRx1();
+        Interrupt& getTx0();
+        Interrupt& getTx1();
+        Interrupt& getRx0();
+        Interrupt& getRx1();
     }
 
     namespace io_port {

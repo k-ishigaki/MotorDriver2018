@@ -13,7 +13,7 @@ template<uint8_t offset> class IOPort_ : IOPort {
             return instance;
         }
 
-        void setPinModes(uint8_t positions, PinMode mode) const {
+        void setPinModes(uint8_t positions, PinMode mode) const override {
             switch (mode) {
                 case PinMode::DigitalOutput:
                     regs::DDR |= positions;
@@ -29,15 +29,15 @@ template<uint8_t offset> class IOPort_ : IOPort {
             }
         }
 
-        uint8_t read() const {
+        uint8_t read() const override {
             return regs::PIN;
         }
 
-        void write(uint8_t positions, uint8_t outputs) const {
+        void write(uint8_t positions, uint8_t outputs) const override {
             regs::PORT = (~positions & regs::PORT) | (positions & outputs);
         }
 
-        void toggle(uint8_t positions) const {
+        void toggle(uint8_t positions) const override {
             // Writing a '1' to PINxn toggles the value of PORTxn,
             // independent on the value of DDRxn
             regs::PIN |= positions;

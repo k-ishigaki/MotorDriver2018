@@ -5,7 +5,6 @@
 # Defined
 -D__AVR_ATmega328PB__
 -DF_CPU=8000000
-
 # Includes
 #-I/root/.platformio/packages/framework-arduinoavr/cores/arduino
 -I/root/.platformio/packages/framework-arduinoavr/variants/atmega328pb

@@ -15,13 +15,18 @@ template<class T> class Interrupt_ : public Interrupt {
             return instance;
         }
 
-        void registerHandler(InterruptHandler* handler) {
-            this->handler = handler;
+        void registerHandler(InterruptHandler* handler) override {
+            auto f = [](Interrupt_* self, InterruptHandler* handler) {
+                    self->handler = handler;
+            };
+            hardware::noInterrupt(+f, this, handler);
         }
 
-        void enable() const { reg::EI = 1; }
+        bool isEnable() const override { return reg::EI; }
 
-        void disable() const { reg::EI = 0; }
+        void enable() const override { reg::EI = 1; }
+
+        void disable() const override { reg::EI = 0; }
 
         void handleInterrupt() {
             if (handler != nullptr) { handler->handleInterrupt(); }
@@ -32,13 +37,13 @@ template<class T> class Interrupt_ : public Interrupt {
 };
 
 ISR(USART0_TX_vect) { Interrupt_<tx0_t>::getInstance().handleInterrupt(); }
-const Interrupt& hi::getTx0() { return Interrupt_<tx0_t>::getInstance(); }
+Interrupt& hi::getTx0() { return Interrupt_<tx0_t>::getInstance(); }
 
 ISR(USART0_RX_vect) { Interrupt_<rx0_t>::getInstance().handleInterrupt(); }
-const Interrupt& hi::getRx0() { return Interrupt_<rx0_t>::getInstance(); }
+Interrupt& hi::getRx0() { return Interrupt_<rx0_t>::getInstance(); }
 
 ISR(USART1_TX_vect) { Interrupt_<tx1_t>::getInstance().handleInterrupt(); }
-const Interrupt& hi::getTx1() { return Interrupt_<tx1_t>::getInstance(); }
+Interrupt& hi::getTx1() { return Interrupt_<tx1_t>::getInstance(); }
 
 ISR(USART1_RX_vect) { Interrupt_<rx1_t>::getInstance().handleInterrupt(); }
-const Interrupt& hi::getRx1() { return Interrupt_<rx1_t>::getInstance(); }
+Interrupt& hi::getRx1() { return Interrupt_<rx1_t>::getInstance(); }

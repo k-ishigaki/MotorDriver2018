@@ -26,28 +26,28 @@ template<uint8_t offset> class USART_ : USART {
             return instance;
         }
 
-        buffer_size_t read() const {
+        buffer_size_t read() const override {
             return regs::UDR + (static_cast<buffer_size_t>(regs::UCSRB.RXB8) << 8);
         }
 
-        bool hasReceived() const {
+        bool hasReceived() const override {
             return regs::UCSRA.RXC;
         }
 
-        void write(buffer_size_t data) const {
+        void write(buffer_size_t data) const override {
             regs::UCSRB.TXB8 = data >> 8;
             regs::UDR = static_cast<uint8_t>(data & 0xFF);
         }
 
-        bool isTransmitBufferEmpty() const {
+        bool isTransmitBufferEmpty() const override {
             return regs::UCSRA.UDRE;
         }
 
-        void resetReceiver() const {
+        void resetReceiver() const override {
             this->read();
         }
 
-        error_flag_t getErrors() const {
+        error_flag_t getErrors() const override {
             return 0;
         }
 };
