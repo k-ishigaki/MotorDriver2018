@@ -35,13 +35,15 @@ SerialBuffer serialBuffer(
         interrupt::getRx1(),
         interrupt::getTx1());
 
-void putcharImpl(char data) {
-    serialBuffer.write(data);
-}
-
 void setup() {
-    log::configure(putcharImpl, log::Level::Info);
+    // system clock freq = 8MHz div 1
     SystemClockPrescaler::configure(SystemClockPrescaler::DivisionFactor::Num1);
+
+    // configure log module
+    auto putCharImpl = [](char data) { serialBuffer.write(data); };
+    log::configure(+putCharImpl, log::Level::Info);
+
+    // must be called here
     enableGlobalInterrupt();
 }
 

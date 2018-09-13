@@ -4,16 +4,16 @@
 using namespace application::log;
 
 namespace {
-    putcharImpl func = nullptr;
+    void (*putCharImpl)(char) = nullptr;
     Level level = Level::Error;
     int putImpl(char data, FILE* file) {
-        (*func)(data);
+        (*putCharImpl)(data);
         return 0;
     }
 }
 
-void application::log::configure(putcharImpl func, Level level) {
-    ::func = func;
+void application::log::configure(void (*putCharImpl)(char), Level level) {
+    ::putCharImpl = putCharImpl;
     ::level = level;
     fdevopen(::putImpl, nullptr);
 }

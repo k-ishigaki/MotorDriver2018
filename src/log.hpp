@@ -16,8 +16,6 @@ namespace application {
             Error,
         };
 
-        using putcharImpl = void (*)(char);
-
         namespace impl {
             // do not use from other modules
             bool needsOutput(Level);
@@ -32,7 +30,7 @@ namespace application {
                 if (needsOutput(level) == false) {
                     return;
                 }
-                printf("%s(%d):%s[%c] ", file, line, func, tagChar);
+                printf("[%c]%s(%d):%s ", tagChar, file, line, func);
                 printf(format, args ...);
                 putchar('\n');
                 putchar('\r');
@@ -45,7 +43,7 @@ namespace application {
          * @param function pointer implements putchar
          * @param log output level
          */
-        void configure(putcharImpl, Level);
+        void configure(void (*)(char), Level);
 
 
         /**
