@@ -40,6 +40,14 @@ namespace hardware {
         enum class PinMode : uint8_t;
     }
 
+    namespace pwm {
+        enum class OutputMode : uint8_t;
+    }
+
+    namespace timer {
+        struct Config;
+    }
+
     namespace usart {
         using baudrate_size_t = unsigned long;
         using buffer_size_t = uint16_t;

@@ -6,7 +6,9 @@
 #include "ad_converter.hpp"
 #include "interrupt.hpp"
 #include "io_port.hpp"
+#include "pwm.hpp"
 #include "usart.hpp"
+#include "timer.hpp"
 
 namespace hardware {
     namespace SystemClockPrescaler {
@@ -37,6 +39,15 @@ namespace hardware {
         Interrupt& getTx1();
         Interrupt& getRx0();
         Interrupt& getRx1();
+        Interrupt& getTimer1Ovf();
+        Interrupt& getOC1A();
+        Interrupt& getOC1B();
+        Interrupt& getTimer3Ovf();
+        Interrupt& getOC3A();
+        Interrupt& getOC3B();
+        Interrupt& getTimer4Ovf();
+        Interrupt& getOC4A();
+        Interrupt& getOC4B();
     }
 
     namespace io_port {
@@ -50,6 +61,25 @@ namespace hardware {
         const IOPort& getC();
         const IOPort& getD();
         const IOPort& getE();
+    }
+
+    namespace pwm {
+        enum class OutputMode : uint8_t {
+            Disabled = 0b00,
+            Toggle = 0b01,
+            NonInverting = 0b10,
+            Inverting = 0b11,
+        };
+
+        struct Config {
+        };
+
+        PWM& get1A(const Config&);
+        PWM& get1B(const Config&);
+        PWM& get3A(const Config&);
+        PWM& get3B(const Config&);
+        PWM& get4A(const Config&);
+        PWM& get4B(const Config&);
     }
 
     namespace usart {
@@ -92,6 +122,61 @@ namespace hardware {
         const USART& get0(const Config&);
         const USART& get1(const Config&);
     }
+
+    namespace timer {
+
+        enum class WaveformGenerationMode {
+            Normal = 0b0000,
+            PWM_PhaseCorrect_8bit = 0b0001,
+            PWM_PhaseCorrect_9bit = 0b0010,
+            PWM_PhaseCorrect_10bit = 0b0011,
+            CTC_OCRA = 0b0100,
+            FastPWM_8bit = 0b0101,
+            FastPWM_9bit = 0b0110,
+            FastPWM_10bit = 0b0111,
+            PWM_PhaseAndFrequencyCorrect_ICR = 0b1000,
+            PWM_PhaseAndFrequencyCorrect_OCRA = 0b1001,
+            PWM_PhaseCorrect_ICR = 0b1010,
+            PWM_PhaseCorrect_OCRA = 0b1011,
+            CTC_ICR = 0b1100,
+            //Reserved = 0b1101,
+            FastPWM_ICR = 0b1110,
+            FastPWM_OCRA = 0b1111,
+        };
+
+        enum class InputCaptureNoiseCanceler {
+            Disabled = 0b0,
+            Enabled = 0b1,
+        };
+
+        enum class InputCaptureEdgeSelect {
+            FallingEdge = 0b0,
+            RisingEdge = 0b1,
+        };
+
+        enum class Clock {
+            NoClockSource = 0b000,
+            Div1 = 0b001,
+            Div8 = 0b010,
+            Div64 = 0b011,
+            Div256 = 0b100,
+            Div1024 = 0b101,
+            External_FallingEdge = 0b110,
+            External_RisingEdge = 0b111,
+        };
+
+        struct Config {
+            WaveformGenerationMode waveformGenerationMode;
+            InputCaptureNoiseCanceler inputCaptureNoiseCanceler;
+            InputCaptureEdgeSelect inputCaptureEdgeSelect;
+            Clock clock;
+        };
+
+        Timer& get1(const Config&);
+        Timer& get3(const Config&);
+        Timer& get4(const Config&);
+    }
+
     ADConverter* getADConverter();
 }
 

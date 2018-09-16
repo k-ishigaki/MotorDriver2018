@@ -22,14 +22,13 @@ class DigitalOutputPin {
         /**
          * Digital output pin constructor.
          *
-         * 3rd param are must be correctly supplied to work correctly.
+         * The 3rd param must be correctly supplied to work correctly.
          *
-         * @param port IOPort interface
-         * @param bit position for port
-         * @param mode digital output pin mode
+         * @param IOPort interface
+         * @param position for port
+         * @param digital output pin mode
          */
         DigitalOutputPin(const IOPort&, Bit, PinMode);
-
 
         /**
          * Write output to pin.

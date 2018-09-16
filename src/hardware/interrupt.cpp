@@ -47,3 +47,30 @@ Interrupt& hi::getTx1() { return Interrupt_<tx1_t>::getInstance(); }
 
 ISR(USART1_RX_vect) { Interrupt_<rx1_t>::getInstance().handleInterrupt(); }
 Interrupt& hi::getRx1() { return Interrupt_<rx1_t>::getInstance(); }
+
+ISR(TIMER1_OVF_vect) { Interrupt_<toie1_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getTimer1Ovf() { return Interrupt_<toie1_t>::getInstance(); }
+
+ISR(TIMER1_COMPA_vect) { Interrupt_<ocie1a_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getOC1A() { return Interrupt_<ocie1a_t>::getInstance(); }
+
+ISR(TIMER1_COMPB_vect) { Interrupt_<ocie1b_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getOC1B() { return Interrupt_<ocie1b_t>::getInstance(); }
+
+ISR(TIMER3_OVF_vect) { Interrupt_<toie3_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getTimer3Ovf() { return Interrupt_<toie3_t>::getInstance(); }
+
+ISR(TIMER3_COMPA_vect) { Interrupt_<ocie3a_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getOC3A() { return Interrupt_<ocie3a_t>::getInstance(); }
+
+ISR(TIMER3_COMPB_vect) { Interrupt_<ocie3b_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getOC3B() { return Interrupt_<ocie3b_t>::getInstance(); }
+
+ISR(TIMER4_OVF_vect) { Interrupt_<toie4_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getTimer4Ovf() { return Interrupt_<toie4_t>::getInstance(); }
+
+ISR(TIMER4_COMPA_vect) { Interrupt_<ocie4a_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getOC4A() { return Interrupt_<ocie4a_t>::getInstance(); }
+
+ISR(TIMER4_COMPB_vect) { Interrupt_<ocie4b_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getOC4B() { return Interrupt_<ocie4b_t>::getInstance(); }
