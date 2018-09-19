@@ -5,8 +5,6 @@
 
 class Timer {
     public:
-        virtual void configure(const hardware::timer::Config&);
-
         /**
          * Get counter value of timer module.
          *
@@ -18,7 +16,7 @@ class Timer {
          * (8bit timer) 0~255<br>
          * (16bit timer) 0~65535
          */
-        virtual int16_t getCount() = 0;
+        virtual uint16_t getCount() = 0;
 
         /**
          * Set counter value of timer module.

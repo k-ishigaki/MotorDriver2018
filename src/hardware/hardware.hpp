@@ -6,6 +6,7 @@
 #include "ad_converter.hpp"
 #include "interrupt.hpp"
 #include "io_port.hpp"
+#include "pin_change_interrupt.hpp"
 #include "pwm.hpp"
 #include "usart.hpp"
 #include "timer.hpp"
@@ -48,6 +49,13 @@ namespace hardware {
         Interrupt& getTimer4Ovf();
         Interrupt& getOC4A();
         Interrupt& getOC4B();
+        Interrupt& getTimer2Ovf();
+        Interrupt& getOC2A();
+        Interrupt& getOC2B();
+        Interrupt& getPCI0();
+        Interrupt& getPCI1();
+        Interrupt& getPCI2();
+        Interrupt& getPCI3();
     }
 
     namespace io_port {
@@ -61,6 +69,13 @@ namespace hardware {
         const IOPort& getC();
         const IOPort& getD();
         const IOPort& getE();
+    }
+
+    namespace pin_change_interrupt {
+        PinChangeInterrupt& getPCI0();
+        PinChangeInterrupt& getPCI1();
+        PinChangeInterrupt& getPCI2();
+        PinChangeInterrupt& getPCI3();
     }
 
     namespace pwm {
@@ -175,6 +190,37 @@ namespace hardware {
         Timer& get1(const Config&);
         Timer& get3(const Config&);
         Timer& get4(const Config&);
+    }
+
+    namespace timer2 {
+        enum class WaveformGenerationMode {
+            Normal = 0b000,
+            PWM_PhaseCorrect = 0b001,
+            CTC_OCRA = 0b010,
+            FastPWM = 0b011,
+            //Reserved = 0b100,
+            PWM_PhaseCorrect_OCRA = 0b101,
+            //Reserved = 0b110,
+            FastPWM_OCRA = 0b111,
+        };
+
+        enum class Clock {
+            NoClockSource = 0b000,
+            Div1 = 0b001,
+            Div8 = 0b010,
+            Div32 = 0b011,
+            Div64 = 0b100,
+            Div128 = 0b101,
+            Div256 = 0b110,
+            Div1024 = 0b111,
+        };
+
+        struct Config {
+            WaveformGenerationMode waveformGenerationMode;
+            Clock clock;
+        };
+
+        Timer& get2(const Config&);
     }
 
     ADConverter* getADConverter();

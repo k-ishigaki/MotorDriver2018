@@ -43,6 +43,30 @@ namespace device {
         using timer1_t = timer_t<0x00>;
         using timer3_t = timer_t<0x10>;
         using timer4_t = timer_t<0x20>;
+
+        struct timer2_t {
+            template<class T> struct tccra_t : public T {
+                bits_t<T, Bitpos::B6, 2> COMA;
+                bits_t<T, Bitpos::B4, 2> COMB;
+                bits_t<T, Bitpos::B1, 1> WGM_1;
+                bits_t<T, Bitpos::B2, 1> WGM_0;
+            };
+            static tccra_t<register_t<0xB0, uint8_t>> TCCRA;
+
+            template<class T> struct tccrb_t : public T {
+                bits_t<T, Bitpos::B7, 1> FOCA;
+                bits_t<T, Bitpos::B6, 1> FOCB;
+                bits_t<T, Bitpos::B3, 1> WGM_2;
+                bits_t<T, Bitpos::B0, 3> CS;
+            };
+            static tccrb_t<register_t<0xB1, uint8_t>> TCCRB;
+
+            static register_t<0xB2, uint8_t> TCNT;
+
+            static register_t<0xB3, uint8_t> OCRA;
+
+            static register_t<0xB4, uint8_t> OCRB;
+        };
     }
 }
 

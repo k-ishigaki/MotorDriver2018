@@ -20,8 +20,8 @@ extern "C" void __cxa_pure_virtual() {
 }
 
 DigitalOutputPin pin(
-        io_port::getB(),
-        DigitalOutputPin::Bit::B5,
+        io_port::getC(),
+        DigitalOutputPin::Bit::B1,
         io_port::PinMode::DigitalOutput);
 
 // pins for h-bridge 0
@@ -84,7 +84,7 @@ H_Bridge bridge1(
         interrupt::getOC3B(),
         interrupt::getTimer4Ovf());
 
-const DigitalInputPin& switchPin = DigitalInputPin(
+DigitalInputPin switchPin(
         io_port::getD(),
         DigitalInputPin::Bit::B4,
         io_port::PinMode::DigitalInputWithPullUp);
@@ -92,7 +92,7 @@ const DigitalInputPin& switchPin = DigitalInputPin(
 SerialBuffer serialBuffer(
         RingBuffer::Size::D128,
         usart::get1({
-            38400UL,
+            .baudrate = 38400UL,
             usart::Mode::Asynchronous,
             usart::ParityMode::Disabled,
             usart::StopBitSize::Bit1,
@@ -105,22 +105,44 @@ Timer& timer1 = timer::get1({
         timer::WaveformGenerationMode::FastPWM_10bit,
         timer::InputCaptureNoiseCanceler::Disabled,
         timer::InputCaptureEdgeSelect::RisingEdge,
-        timer::Clock::Div8,
+        timer::Clock::Div64,
         });
 
 Timer& timer3 = timer::get3({
         timer::WaveformGenerationMode::FastPWM_10bit,
         timer::InputCaptureNoiseCanceler::Disabled,
         timer::InputCaptureEdgeSelect::RisingEdge,
-        timer::Clock::Div8,
+        timer::Clock::Div64,
         });
 
 Timer& timer4 = timer::get4({
         timer::WaveformGenerationMode::FastPWM_10bit,
         timer::InputCaptureNoiseCanceler::Disabled,
         timer::InputCaptureEdgeSelect::RisingEdge,
-        timer::Clock::Div8,
+        timer::Clock::Div64,
         });
+
+Timer& timer2 = timer2::get2({
+        timer2::WaveformGenerationMode::Normal,
+        timer2::Clock::Div256,
+        });
+
+namespace {
+    uint16_t count = 0;
+}
+
+class TimerOverflowHandler : public InterruptHandler {
+    void handleInterrupt() override {
+        count = 0;
+    }
+};
+
+class PinChangeInterruptHandler : public InterruptHandler {
+    void handleInterrupt() override {
+        pin.toggle();
+        count++;
+    }
+};
 
 void setup() {
     // system clock freq = 8MHz div 1
@@ -143,6 +165,16 @@ void setup() {
     bridge0.setDutyRatio(1.00);
     bridge1.setDutyRatio(0.00);
 
+    ::timer2.start();
+    interrupt::getTimer2Ovf().registerHandler(new TimerOverflowHandler());
+    interrupt::getTimer2Ovf().enable();
+
+    PinChangeInterrupt& pci1 = hardware::pin_change_interrupt::getPCI1();
+    pci1.enable(1 << 0);
+    Interrupt& pci1interrupt = hardware::interrupt::getPCI1();
+    pci1interrupt.registerHandler(new PinChangeInterruptHandler());
+    pci1interrupt.enable();
+
     // must be called here
     enableGlobalInterrupt();
 
@@ -157,7 +189,7 @@ void loop() {
     if (dutyRatio < 0.0) {
         dutyRatio = 1.0;
     }
-    pin.write(switchPin.read());
+    //pin.write(switchPin.read());
     _delay_ms(1000);
     log_v("out");
 }

@@ -25,20 +25,29 @@ namespace device {
         template<uint8_t offset> struct toie_t
             : public interrupt_t<0x6F + offset, Bitpos::B0> {};
         using toie1_t = toie_t<0x00>;
+        using toie2_t = toie_t<0x01>;
         using toie3_t = toie_t<0x02>;
         using toie4_t = toie_t<0x03>;
 
         template<uint8_t offset> struct ociea_t
             : public interrupt_t<0x6F + offset, Bitpos::B1> {};
         using ocie1a_t = ociea_t<0x00>;
+        using ocie2a_t = ociea_t<0x01>;
         using ocie3a_t = ociea_t<0x02>;
         using ocie4a_t = ociea_t<0x03>;
 
         template<uint8_t offset> struct ocieb_t
             : public interrupt_t<0x6F + offset, Bitpos::B2> {};
         using ocie1b_t = ocieb_t<0x00>;
+        using ocie2b_t = ocieb_t<0x01>;
         using ocie3b_t = ocieb_t<0x02>;
         using ocie4b_t = ocieb_t<0x03>;
+
+        using pcie0_t = interrupt_t<0x68, Bitpos::B0>;
+        using pcie1_t = interrupt_t<0x68, Bitpos::B1>;
+        using pcie2_t = interrupt_t<0x68, Bitpos::B2>;
+        using pcie3_t = interrupt_t<0x68, Bitpos::B3>;
+
     }
 }
 
