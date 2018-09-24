@@ -34,7 +34,7 @@ H_Bridge::H_Bridge(
         this->compareMatchInterrupt1.registerHandler(
                 new CompareMatchInterruptHandler1(this));
         this->pwm_l.setOutputMode(disabledMode);
-        this->pwm_l.setDutyCycle(1023 - 30);
+        this->pwm_l.setDutyCycle(1023 - 100);
         this->compareMatchInterrupt2.registerHandler(
                 new CompareMatchInterruptHandler2(this));
         this->timerOverflowInterrupt.registerHandler(
@@ -102,16 +102,16 @@ void H_Bridge::changeDirection(Direction direction) {
 
 void H_Bridge::setDutyRatio(float ratio) {
     uint16_t count = 1023 * ratio;
-    count = count > 900 ? 900 : count;
-    count = count < 100 ? 100 : count;
+    count = count > 800 ? 800 : count;
+    count = count < 0 ? 0 : count;
     switch (this->currentDirection) {
         case Direction::Forward:
             this->pwm_0h.setDutyCycle(count);
-            this->pwm_1h.setDutyCycle(count + 20);
+            this->pwm_1h.setDutyCycle(count);
             break;
         case Direction::Backward:
             this->pwm_1h.setDutyCycle(count);
-            this->pwm_0h.setDutyCycle(count + 20);
+            this->pwm_0h.setDutyCycle(count);
             break;
         default:
             log_i("mode is not pwm, ignored");

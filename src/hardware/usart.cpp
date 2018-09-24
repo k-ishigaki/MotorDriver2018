@@ -1,6 +1,7 @@
 #include "usart.hpp"
 #include "../device/usart.hpp"
 #include "hardware.hpp"
+#include <math.h>
 
 using namespace device::usart;
 using namespace hardware::usart;
@@ -10,9 +11,11 @@ template<uint8_t offset> class USART_ : USART {
     using regs = usart_t<offset>;
     public:
         USART_(const Config& config) {
+            // Double the USART Transmission Speed
+            regs::UCSRA.U2X = 1;
             regs::UCSRB.RXEN = 1;
             regs::UCSRB.TXEN = 1;
-            regs::UBRR = SystemClockFrequency / 16UL / config.baudrate - 1;
+            regs::UBRR = lround(static_cast<float>(SystemClockFrequency) / (8UL * config.baudrate) - 1);
             regs::UCSRC.UMSEL = static_cast<uint8_t>(config.mode);
             regs::UCSRC.UPM = static_cast<uint8_t>(config.parityMode);
             regs::UCSRC.USBS = static_cast<uint8_t>(config.stopBitSize);

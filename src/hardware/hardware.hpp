@@ -4,6 +4,7 @@
 #include "hardware_implementation.hpp"
 
 #include "ad_converter.hpp"
+#include "i2c.hpp"
 #include "interrupt.hpp"
 #include "io_port.hpp"
 #include "pin_change_interrupt.hpp"
@@ -35,7 +36,24 @@ namespace hardware {
         void configure(DivisionFactor);
     }
 
+    namespace i2c {
+        enum class GeneralCallReception {
+            Disable = 0,
+            Enable = 1,
+        };
+
+        struct Config {
+            uint8_t slaveAddress;
+            GeneralCallReception generalCallReception;
+        };
+
+        I2CSlave& getTwi0(const Config&);
+        I2CSlave& getTwi1(const Config&);
+    }
+
     namespace interrupt {
+        Interrupt& getTwi0();
+        Interrupt& getTwi1();
         Interrupt& getTx0();
         Interrupt& getTx1();
         Interrupt& getRx0();

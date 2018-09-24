@@ -30,7 +30,7 @@ namespace application {
                 if (needsOutput(level) == false) {
                     return;
                 }
-                printf("[%c]%s(%d):%s ", tagChar, file, line, func);
+                printf("%c(%d):%s ", tagChar, line, func);
                 printf(format, args ...);
                 putchar('\n');
                 putchar('\r');

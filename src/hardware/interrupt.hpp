@@ -27,7 +27,7 @@ class Interrupt {
          *
          * @return true if enabled, false otherwise
          */
-        virtual bool isEnable() const = 0;
+        virtual bool isEnable() = 0;
 
         /**
          * Enable the interrupt.
@@ -35,7 +35,7 @@ class Interrupt {
          * This method must be called after calling
          * Interrupt#registerListener.
          */
-        virtual void enable() const = 0;
+        virtual void enable() = 0;
 
         /**
          * Disable the interrupt.
@@ -43,7 +43,7 @@ class Interrupt {
          * You should call this method when stop the interrupt
          * because it is unable to remove registerd listener.
          */
-        virtual void disable() const = 0;
+        virtual void disable() = 0;
 };
 
 #endif

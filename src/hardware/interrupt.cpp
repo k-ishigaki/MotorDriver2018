@@ -22,11 +22,11 @@ template<class T> class Interrupt_ : public Interrupt {
             hardware::noInterrupt(+f, this, handler);
         }
 
-        bool isEnable() const override { return reg::EI; }
+        bool isEnable() override { return reg::EI; }
 
-        void enable() const override { reg::EI = 1; }
+        void enable() override { reg::EI = 1; }
 
-        void disable() const override { reg::EI = 0; }
+        void disable() override { reg::EI = 0; }
 
         void handleInterrupt() {
             if (handler != nullptr) { handler->handleInterrupt(); }
@@ -35,6 +35,12 @@ template<class T> class Interrupt_ : public Interrupt {
     private:
         InterruptHandler* handler = nullptr;
 };
+
+ISR(TWI0_vect) { Interrupt_<twie0_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getTwi0() { return Interrupt_<twie0_t>::getInstance(); }
+
+ISR(TWI1_vect) { Interrupt_<twie1_t>::getInstance().handleInterrupt(); }
+Interrupt& hi::getTwi1() { return Interrupt_<twie1_t>::getInstance(); }
 
 ISR(USART0_TX_vect) { Interrupt_<tx0_t>::getInstance().handleInterrupt(); }
 Interrupt& hi::getTx0() { return Interrupt_<tx0_t>::getInstance(); }

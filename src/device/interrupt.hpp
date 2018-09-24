@@ -48,6 +48,10 @@ namespace device {
         using pcie2_t = interrupt_t<0x68, Bitpos::B2>;
         using pcie3_t = interrupt_t<0x68, Bitpos::B3>;
 
+        template<uint8_t offset> struct twie_t
+            : public interrupt_t<0xBC + offset, Bitpos::B0> {};
+        using twie0_t = twie_t<0x00>;
+        using twie1_t = twie_t<0x20>;
     }
 }
 

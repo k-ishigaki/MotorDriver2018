@@ -35,6 +35,9 @@ namespace hardware {
         return result;
     }
 
+    namespace i2c {
+    }
+
     namespace io_port {
         enum class PinMode : uint8_t;
     }

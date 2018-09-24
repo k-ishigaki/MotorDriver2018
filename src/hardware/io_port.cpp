@@ -34,13 +34,16 @@ template<uint8_t offset> class IOPort_ : IOPort {
         }
 
         void write(uint8_t positions, uint8_t outputs) const override {
-            regs::PORT = (~positions & regs::PORT) | (positions & outputs);
+            auto f = [](uint8_t positions, uint8_t outputs) {
+                regs::PORT = (~positions & regs::PORT) | (positions & outputs);
+            };
+            hardware::noInterrupt(+f, positions, outputs);
         }
 
         void toggle(uint8_t positions) const override {
             // Writing a '1' to PINxn toggles the value of PORTxn,
             // independent on the value of DDRxn
-            regs::PIN |= positions;
+            regs::PIN = positions;
         }
 };
 
