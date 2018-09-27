@@ -34,11 +34,13 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
             //log_i("AddressReceivedR");
             if (this->currentAddress == 0) {
                 //log_e("not addressed");
+                this->i2cSlave.releaseClock(I2CSlave::NextOperation::FinishTransferring);
                 return;
             }
             switch (this->outer->identifiers[this->currentAddress]) {
                 case 0:
                     //log_e("ellegal address");
+                    this->i2cSlave.releaseClock(I2CSlave::NextOperation::FinishTransferring);
                     return;
                 case 1:
                     // buffer is not used because of single transmission
@@ -57,6 +59,7 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
                     this->i2cSlave.releaseClock(I2CSlave::NextOperation::TransferMoreThan1Byte);
                     return;
             }
+            // cannot be reached
             return;
         case I2CSlave::Event::DataTransmitted:
         case I2CSlave::Event::LastDataTransmitted:
@@ -72,6 +75,7 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
             } else {
                 this->i2cSlave.releaseClock(I2CSlave::NextOperation::TransferMoreThan1Byte);
             }
+            // cannot be reached
             return;
         case I2CSlave::Event::AddressReceivedWithWrite:
             //log_i("AddressReceivedW");
@@ -82,6 +86,7 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
             switch (this->outer->identifiers[this->currentAddress]) {
                 case 0:
                     //log_e("ellegal address");
+                    this->i2cSlave.releaseClock(I2CSlave::NextOperation::FinishTransferring);
                     return;
                 case 1:
                     this->i2cSlave.releaseClock(I2CSlave::NextOperation::TransferLastByte);
@@ -90,6 +95,7 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
                     this->i2cSlave.releaseClock(I2CSlave::NextOperation::TransferMoreThan1Byte);
                     return;
             }
+            // cannot be reached
             return;
         case I2CSlave::Event::DataReceived:
         case I2CSlave::Event::LastDataReceived:
@@ -99,6 +105,7 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
                 auto receivedAddress = this->i2cSlave.read();
                 if (receivedAddress > this->outer->maxAddress) {
                     //log_e("receivedAddress > maxAddress");
+                    this->i2cSlave.releaseClock(I2CSlave::NextOperation::FinishTransferring);
                     return;
                 }
                 this->currentAddress = receivedAddress;
@@ -123,6 +130,7 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
                     this->i2cSlave.releaseClock(I2CSlave::NextOperation::TransferMoreThan1Byte);
                 }
             }
+            // cannot be reached
             return;
     }
 }
