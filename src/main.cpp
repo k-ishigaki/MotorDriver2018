@@ -163,7 +163,21 @@ I2CSlave& i2cSlave = i2c::getTwi0({
         .generalCallReception = i2c::GeneralCallReception::Disable
         });
 
-I2CBuffer i2cBuffer(i2cSlave, interrupt::getTwi0(), 0x08, 6);
+InterruptHandler* i2cHandler = nullptr;
+
+class SoftwareI2cInterrupt : public Interrupt {
+    public:
+        void registerHandler(InterruptHandler* handler) override {
+            i2cHandler = handler;
+        }
+        bool isEnable() override { return true; }
+        void enable() override {}
+        void disable() override {}
+};
+
+SoftwareI2cInterrupt softwareI2cInterrupt;
+
+I2CBuffer i2cBuffer(i2cSlave, softwareI2cInterrupt, 0x08, 6);
 
 Odmetry odmetry(encoder0, encoder1, 180.0);
 
@@ -181,6 +195,8 @@ struct targetSpeedData_t {
     int16_t left = 0;
     int16_t right = 0;
 } targetSpeedData;
+
+
 
 void setup() {
     // system clock freq = 8MHz div 1
@@ -262,6 +278,7 @@ void loop() {
         updateTargetSpeed();
         speedController.determineOutput();
     }
+    i2cHandler->handleInterrupt();
 }
 
 int main() {
