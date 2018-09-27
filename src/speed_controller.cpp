@@ -44,31 +44,30 @@ void SpeedController::determineOutput() {
     int targetCenterAcceleration =
         targetCenterSpeed - lastTargetCenterSpeed;
     int centerSpeedError = lastTargetCenterSpeed - measuredCenterSpeed;
-    int centerTerm =
-        K_C1 * ((long)targetCenterSpeed + K_C2 * targetCenterAcceleration +
+    float centerTerm =
+        K_C1 * static_cast<float>((long)targetCenterSpeed + K_C2 * targetCenterAcceleration +
                 centerSpeedPID->calcCorrectionValue(centerSpeedError)) /
-        INTEGER_SCALE;
+        INTEGER_SCALE / 256;
     // 角速度項の計算
     int measuredAngularSpeed = round((rightSpeed - leftSpeed) * 1000 / 180.0);
     int targetAngularAcceleration =
         targetAngularSpeed - lastTargetAngularSpeed;
     int angularSpeedError = lastTargetAngularSpeed - measuredAngularSpeed;
-    int angularTerm =
+    float angularTerm =
         K_A1 *
-        ((long)targetAngularSpeed + K_A2 * targetAngularAcceleration +
+        static_cast<float>((long)targetAngularSpeed + K_A2 * targetAngularAcceleration +
          angularSpeedPID->calcCorrectionValue(angularSpeedError)) /
-        INTEGER_SCALE;
+        INTEGER_SCALE / 256;
     // 左右出力値計算
-    int leftOutput = centerTerm - angularTerm + OFFSET / INTEGER_SCALE;
-    int rightOutput = centerTerm + angularTerm + OFFSET / INTEGER_SCALE;
+    float leftOutput = centerTerm - angularTerm + static_cast<float>(OFFSET) / INTEGER_SCALE / 256;
+    float rightOutput = centerTerm + angularTerm + static_cast<float>(OFFSET) / INTEGER_SCALE / 256;
     // 出力
 //    if (targetCenterSpeed == 0 && targetAngularSpeed == 0) {
 //        leftBridge.changeDirection(H_Bridge::Direction::Stop);
 //        rightBridge.changeDirection(H_Bridge::Direction::Stop);
 //    } else {
-    log_i("ct = %d, at = %d, mc = %d, ma = %d, l = %d, r = %d, ct = %d, at = %d", targetCenterSpeed, targetAngularSpeed, measuredCenterSpeed, measuredAngularSpeed, leftOutput, rightOutput, centerTerm, angularTerm);
-    leftBridge.setDutyRatio(leftOutput > 0 ? leftOutput / 256.0 : 0);
-    rightBridge.setDutyRatio(rightOutput > 0 ? rightOutput / 256.0 : 0);
+    //log_i("ct = %d, at = %d, mc = %d, ma = %d", targetCenterSpeed, targetAngularSpeed, measuredCenterSpeed, measuredAngularSpeed);
+    leftBridge.setDutyRatio(leftOutput > 0 ? leftOutput : 0);
+    rightBridge.setDutyRatio(rightOutput > 0 ? rightOutput : 0);
 //    }
 }
-
