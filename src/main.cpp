@@ -89,6 +89,11 @@ DigitalInputPin switchPin(
         DigitalInputPin::Bit::B4,
         io_port::PinMode::DigitalInputWithPullUp);
 
+DigitalOutputPin switchLedPin(
+        io_port::getC(),
+        DigitalOutputPin::Bit::B3,
+        io_port::PinMode::DigitalOutput);
+
 SerialBuffer serialBuffer(
         RingBuffer::Size::D128,
         usart::get1({
@@ -128,10 +133,20 @@ DigitalOutputPin led_encoder0(
         DigitalOutputPin::Bit::B5,
         io_port::PinMode::DigitalOutput);
 
+DigitalInputPin encoder0Input(
+        io_port::getE(),
+        DigitalInputPin::Bit::B3,
+        io_port::PinMode::DigitalInputWithPullUp);
+
 DigitalOutputPin led_encoder1(
         io_port::getC(),
         DigitalOutputPin::Bit::B1,
         io_port::PinMode::DigitalOutput);
+
+DigitalInputPin encoder1Input(
+        io_port::getC(),
+        DigitalInputPin::Bit::B0,
+        io_port::PinMode::DigitalInputWithPullUp);
 
 Timer& timer2 = timer2::get2({
         timer2::WaveformGenerationMode::Normal,
@@ -140,8 +155,8 @@ Timer& timer2 = timer2::get2({
 
 PeriodicTimer periodicTimer(interrupt::getTimer2Ovf());
 
-Encoder encoder0(interrupt::getPCI3(), led_encoder0);
-Encoder encoder1(interrupt::getPCI1(), led_encoder1);
+Encoder encoder0(interrupt::getPCI3(), encoder0Input, led_encoder0);
+Encoder encoder1(interrupt::getPCI1(), encoder1Input, led_encoder1);
 
 I2CSlave& i2cSlave = i2c::getTwi0({
         .slaveAddress = 0x60,
@@ -173,6 +188,7 @@ void setup() {
 
     // configure log module
     auto putCharImpl = [](char data) { serialBuffer.write(data); };
+    //auto putCharImpl = [](char data) {};
     log::configure(+putCharImpl, log::Level::Vervose);
 
     log_e("error log test");

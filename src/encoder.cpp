@@ -11,8 +11,8 @@ namespace {
     }
 }
 
-Encoder::Encoder(Interrupt& interrupt, DigitalOutputPin& led) : led(led) {
-    interrupt.registerHandler(new CountInterruptHandler(this));
+Encoder::Encoder(Interrupt& interrupt, DigitalInputPin& inputPin, DigitalOutputPin& led) {
+    interrupt.registerHandler(new CountInterruptHandler(this, inputPin, led));
     interrupt.enable();
 }
 
@@ -29,11 +29,19 @@ float Encoder::getIntegratedLength() const {
     return this->integratedLength;
 }
 
-Encoder::CountInterruptHandler::CountInterruptHandler(Encoder* outer) {
+Encoder::CountInterruptHandler::CountInterruptHandler(Encoder* outer, DigitalInputPin& inputPin, DigitalOutputPin& led) : inputPin(inputPin), led(led) {
     this->outer = outer;
+    this->currentState = this->inputPin.read();
+    this->led.write(this->currentState);
 }
 
 void Encoder::CountInterruptHandler::handleInterrupt() {
-    this->outer->count++;
-    this->outer->led.toggle();
+    if (this->currentState != this->inputPin.read()) {
+        // single count
+        this->currentState = !this->currentState;
+        this->outer->count++;
+        this->led.toggle();
+    } else {
+        // invalid count, do nothing
+    }
 }

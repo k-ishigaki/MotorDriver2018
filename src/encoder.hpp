@@ -3,16 +3,18 @@
 
 #include "hardware/interrupt.hpp"
 #include "framework/digital_output_pin.hpp"
+#include "framework/digital_input_pin.hpp"
 
 class Encoder {
     public:
         /**
          * Construct encoder.
          *
-         * @param interrupt instance for count source
+         * @param interrupt instance for count source (assumes pin change interrupt)
+         * @param encoder input pin (used to check duplicate count)
          * @param led pin for debug
          */
-        Encoder(Interrupt&, DigitalOutputPin&);
+        Encoder(Interrupt&, DigitalInputPin&, DigitalOutputPin&);
 
         /**
          * Load integrated count and calc length.
@@ -30,15 +32,17 @@ class Encoder {
         float getIntegratedLength() const;
 
     private:
-        DigitalOutputPin& led;
         uint8_t count;
         float integratedLength;
         class CountInterruptHandler : public InterruptHandler {
             public:
-                CountInterruptHandler(Encoder* outer);
+                CountInterruptHandler(Encoder*, DigitalInputPin&, DigitalOutputPin&);
                 void handleInterrupt() override;
             private:
                 Encoder* outer;
+                DigitalInputPin& inputPin;
+                DigitalOutputPin& led;
+                bool currentState;
         };
 };
 
