@@ -63,12 +63,6 @@ void SpeedController::determineOutput() {
     float leftOutput = centerTerm - angularTerm + static_cast<float>(OFFSET) / INTEGER_SCALE / 256;
     float rightOutput = centerTerm + angularTerm + static_cast<float>(OFFSET) / INTEGER_SCALE / 256;
     // 出力
-//    if (targetCenterSpeed == 0 && targetAngularSpeed == 0) {
-//        leftBridge.changeDirection(H_Bridge::Direction::Stop);
-//        rightBridge.changeDirection(H_Bridge::Direction::Stop);
-//    } else {
-    //log_i("ct = %d, at = %d, mc = %d, ma = %d", targetCenterSpeed, targetAngularSpeed, measuredCenterSpeed, measuredAngularSpeed);
     leftBridge.setDutyRatio(leftOutput > 0 ? leftOutput : 0);
     rightBridge.setDutyRatio(rightOutput > 0 ? rightOutput : 0);
-//    }
 }

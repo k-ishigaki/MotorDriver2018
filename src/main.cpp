@@ -45,7 +45,7 @@ DigitalOutputPin pin_b0l0(
         DigitalOutputPin::Bit::B7,
         io_port::PinMode::DigitalOutput);
 
-H_Bridge bridge0(
+H_Bridge rightFullBridge(
         pwm::get1A({}),
         pwm::get1B({}),
         pwm::OutputMode::NonInverting,
@@ -75,7 +75,7 @@ DigitalOutputPin pin_b1l1(
         DigitalOutputPin::Bit::B3,
         io_port::PinMode::DigitalOutput);
 
-H_Bridge bridge1(
+H_Bridge leftFullBridge(
         pwm::get4A({}),
         pwm::get4B({}),
         pwm::OutputMode::NonInverting,
@@ -86,6 +86,16 @@ H_Bridge bridge1(
         pwm::get3B({}),
         interrupt::getOC3B(),
         interrupt::getTimer4Ovf());
+
+DigitalInputPin sdaPullupPin(
+        io_port::getC(),
+        DigitalInputPin::Bit::B4,
+        io_port::PinMode::DigitalInputWithPullUp);
+
+DigitalInputPin sclPullupPin(
+        io_port::getC(),
+        DigitalInputPin::Bit::B5,
+        io_port::PinMode::DigitalInputWithPullUp);
 
 DigitalInputPin switchPin(
         io_port::getD(),
@@ -158,8 +168,8 @@ Timer& timer2 = timer2::get2({
 
 PeriodicTimer periodicTimer(interrupt::getTimer2Ovf());
 
-Encoder encoder0(interrupt::getPCI3(), encoder0Input, led_encoder0);
-Encoder encoder1(interrupt::getPCI1(), encoder1Input, led_encoder1);
+Encoder rightEncoder(interrupt::getPCI3(), encoder0Input, led_encoder0);
+Encoder leftEncoder(interrupt::getPCI1(), encoder1Input, led_encoder1);
 
 I2CSlave& i2cSlave = i2c::getTwi0({
         .slaveAddress = 0x60,
@@ -182,9 +192,9 @@ SoftwareI2cInterrupt softwareI2cInterrupt;
 
 I2CBuffer i2cBuffer(i2cSlave, softwareI2cInterrupt, 0x08, 6);
 
-Odmetry odmetry(encoder1, encoder0);
+Odmetry odmetry(leftEncoder, rightEncoder);
 
-SpeedController speedController(encoder1, encoder0, bridge1, bridge0);
+SpeedController speedController(leftEncoder, rightEncoder, leftFullBridge, rightFullBridge);
 
 VehicleController vehicleController(speedController);
 
@@ -237,11 +247,11 @@ void setup() {
     timer4.start();
     ::timer2.start();
 
-    bridge0.changeDirection(H_Bridge::Direction::Backward);
-    bridge1.changeDirection(H_Bridge::Direction::Backward);
+    rightFullBridge.changeDirection(H_Bridge::Direction::Backward);
+    leftFullBridge.changeDirection(H_Bridge::Direction::Backward);
 
-    bridge0.setDutyRatio(0.50);
-    bridge1.setDutyRatio(0.50);
+    rightFullBridge.setDutyRatio(0.50);
+    leftFullBridge.setDutyRatio(0.50);
 
     i2cBuffer.registerData(0x01, reinterpret_cast<uint8_t*>(&odmetryData), sizeof(odmetryData_t));
     i2cBuffer.registerData(0x02, reinterpret_cast<uint8_t*>(&odmetryResetFlag), sizeof(uint8_t));
@@ -288,8 +298,13 @@ void updateTargetSpeed() {
         rightSpeed = rightSpeed > 500 ? 500 : rightSpeed;
         rightSpeed = rightSpeed < 0 ? 0 : rightSpeed;
         auto centerSpeed = (leftSpeed + rightSpeed) / 2.0;
-        auto angularSpeed = (rightSpeed - leftSpeed) / config::WheelTread;
-        vehicleController.setTarget(0, 1000, centerSpeed, centerSpeed);
+        float curvature = 0;
+        if (centerSpeed > 0) {
+            curvature = 2.0 * (rightSpeed - leftSpeed) / config::WheelTread / (leftSpeed + rightSpeed);
+        } else {
+            curvature = 0;
+        }
+        vehicleController.setTarget(curvature, 1000, centerSpeed, centerSpeed);
     };
     hardware::noInterrupt(+f);
 }
@@ -331,8 +346,8 @@ void updateTargetRotate() {
 
 void loop() {
     if (periodicTimer.wasInterruptOccured() == true) {
-        encoder0.load();
-        encoder1.load();
+        rightEncoder.load();
+        leftEncoder.load();
         resetOdmetryData();
         odmetry.update();
         updateOdmetryData();
@@ -369,4 +384,3 @@ int main() {
         loop();
     }
 }
-

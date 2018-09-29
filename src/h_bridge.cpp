@@ -44,7 +44,6 @@ H_Bridge::H_Bridge(
 
 void H_Bridge::changeDirection(Direction direction) {
     if (this->currentDirection == direction) {
-        log_i("set to same direction, ignored");
         return;
     }
     switch (direction) {
