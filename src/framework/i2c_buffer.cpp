@@ -41,11 +41,13 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
                 case 0:
                     //log_e("ellegal address");
                     this->i2cSlave.releaseClock(I2CSlave::NextOperation::FinishTransferring);
+                    this->currentIndex = 0;
                     return;
                 case 1:
                     // buffer is not used because of single transmission
                     this->i2cSlave.write((this->outer->pointers[this->currentAddress])[0]);
                     this->currentAddress = 0;
+                    this->currentIndex = 0;
                     this->i2cSlave.releaseClock(I2CSlave::NextOperation::TransferLastByte);
                     return;
                 default:
@@ -55,6 +57,7 @@ void I2CBuffer::SlaveInterruptHandler::handleInterrupt() {
                     for (uint8_t i = 0; i < bufferSize; i++) {
                         this->buffer[i] = pointer[i];
                     }
+                    this->currentIndex = 0;
                     this->i2cSlave.write(this->buffer[this->currentIndex++]);
                     this->i2cSlave.releaseClock(I2CSlave::NextOperation::TransferMoreThan1Byte);
                     return;

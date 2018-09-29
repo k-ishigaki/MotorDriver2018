@@ -4,11 +4,13 @@
 
 #include "config.hpp"
 #include "encoder.hpp"
+#include "locus.hpp"
 #include "log.hpp"
 #include "h_bridge.hpp"
 #include "odmetry.hpp"
 #include "periodic_tiemr.hpp"
 #include "speed_controller.hpp"
+#include "vehicle_controller.hpp"
 #include "framework/digital_output_pin.hpp"
 #include "framework/digital_input_pin.hpp"
 #include "framework/i2c_buffer.hpp"
@@ -180,14 +182,17 @@ SoftwareI2cInterrupt softwareI2cInterrupt;
 
 I2CBuffer i2cBuffer(i2cSlave, softwareI2cInterrupt, 0x08, 6);
 
-Odmetry odmetry(encoder0, encoder1);
+Odmetry odmetry(encoder1, encoder0);
 
 SpeedController speedController(encoder1, encoder0, bridge1, bridge0);
 
+VehicleController vehicleController(speedController);
+
+// I2C data
 struct odmetryData_t {
-    int16_t odmetry_x = 0x5599;
-    int16_t odmetry_y = 0x1122;
-    int16_t odmetry_theta = 0x1144;
+    int16_t odmetry_x = 0;
+    int16_t odmetry_y = 0;
+    int16_t odmetry_theta = 0;
 } odmetryData;
 
 uint8_t odmetryResetFlag = 0;
@@ -197,7 +202,21 @@ struct targetSpeedData_t {
     int16_t right = 0;
 } targetSpeedData;
 
+struct targetStrightData_t {
+    uint16_t length = 0;
+    uint16_t speed = 0;
+} targetStrightData;
 
+struct targetRotateData_t {
+    int16_t theta = 0;
+    uint16_t speed = 0;
+} targetRotateData;
+
+uint16_t targetLocusSpeed = 0;
+
+bool isInOperation = false;
+
+LocusElement* locusElement = nullptr;
 
 void setup() {
     // system clock freq = 8MHz div 1
@@ -227,6 +246,9 @@ void setup() {
     i2cBuffer.registerData(0x01, reinterpret_cast<uint8_t*>(&odmetryData), sizeof(odmetryData_t));
     i2cBuffer.registerData(0x02, reinterpret_cast<uint8_t*>(&odmetryResetFlag), sizeof(uint8_t));
     i2cBuffer.registerData(0x03, reinterpret_cast<uint8_t*>(&targetSpeedData), sizeof(targetSpeedData_t));
+    i2cBuffer.registerData(0x04, reinterpret_cast<uint8_t*>(&targetStrightData), sizeof(targetStrightData_t));
+    i2cBuffer.registerData(0x05, reinterpret_cast<uint8_t*>(&targetRotateData), sizeof(targetRotateData_t));
+    i2cBuffer.registerData(0x06, reinterpret_cast<uint8_t*>(&isInOperation), sizeof(bool));
 
     PinChangeInterrupt& pci1 = hardware::pin_change_interrupt::getPCI1();
     pci1.enable(1 << 0);
@@ -244,11 +266,6 @@ void updateOdmetryData() {
         odmetryData.odmetry_y = machineVector.getY();
         odmetryData.odmetry_theta = 1000 * machineVector.getTheta();
     };
-    Vector machineVector = odmetry.getMachineVector();
-    //log_v("x = %d, y = %d, theta = %d", 
-    //        static_cast<int>(machineVector.getX()),
-    //        static_cast<int>(machineVector.getY()),
-    //        static_cast<int>(1000 * machineVector.getTheta()));
     hardware::noInterrupt(+f);
 }
 
@@ -272,7 +289,42 @@ void updateTargetSpeed() {
         rightSpeed = rightSpeed < 0 ? 0 : rightSpeed;
         auto centerSpeed = (leftSpeed + rightSpeed) / 2.0;
         auto angularSpeed = (rightSpeed - leftSpeed) / config::WheelTread;
-        speedController.setTarget(centerSpeed, angularSpeed);
+        vehicleController.setTarget(0, 1000, centerSpeed, centerSpeed);
+    };
+    hardware::noInterrupt(+f);
+}
+
+void updateTargetStright() {
+    auto f = []() {
+        auto length = targetStrightData.length;
+        if (length != 0) {
+            targetStrightData.length = 0;
+            targetLocusSpeed = targetStrightData.speed;
+            isInOperation = true;
+            if (locusElement != nullptr) {
+                delete locusElement;
+            }
+            locusElement = new StrightLine(odmetry.getMachineVector(), length);
+        }
+    };
+    hardware::noInterrupt(+f);
+}
+
+void updateTargetRotate() {
+    auto f = []() {
+        auto theta = targetRotateData.theta;
+        if (theta != 0) {
+            switchLedPin.toggle();
+            targetRotateData.theta = 0;
+            targetLocusSpeed = targetRotateData.speed;
+            isInOperation = true;
+            if (locusElement != nullptr) {
+                delete locusElement;
+            }
+            auto radius = config::WheelTread / 1.4;
+            radius = theta < 0 ? -radius : radius;
+            locusElement = new CurveLine(odmetry.getMachineVector(), radius, (float)theta / 1000.0);
+        }
     };
     hardware::noInterrupt(+f);
 }
@@ -284,8 +336,29 @@ void loop() {
         resetOdmetryData();
         odmetry.update();
         updateOdmetryData();
-        updateTargetSpeed();
-        speedController.determineOutput();
+        updateTargetStright();
+        updateTargetRotate();
+        if (isInOperation == false) {
+            updateTargetSpeed();
+            vehicleController.determineOutput();
+        } else {
+            Guide guide = locusElement->createGuide(odmetry.getMachineVector());
+            if (guide.isAvailable()) {
+                auto speed = targetLocusSpeed;
+                auto curvature = guide.getCurvature();
+                if (curvature == 0) {
+                    vehicleController.setTarget(guide.getCurvature()
+                            , guide.getRemainingDistance(), speed, speed);
+                } else {
+                    vehicleController.setTarget(guide.getCurvature()
+                            , guide.getRemainingDistance(), speed, 0);
+                }
+                vehicleController.determineOutput();
+            } else {
+                isInOperation = false;
+                vehicleController.determineOutput();
+            }
+        }
     }
     i2cHandler->handleInterrupt();
 }

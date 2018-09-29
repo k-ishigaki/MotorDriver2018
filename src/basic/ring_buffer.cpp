@@ -12,9 +12,9 @@ namespace {
 
 RingBuffer::RingBuffer(const Size size)
     //: maskBits(static_cast<uint8_t>(static_cast<uint16_t>(0x00FF) << static_cast<uint8_t>(size)) >> 8) {
-    : maskBits(0b01111111) {
+    : maskBits(0b00111111) {
         //this->array = new uint8_t[static_cast<uint8_t>(pow(2, static_cast<uint8_t>(size)))];
-        this->array = new uint8_t[128];
+        this->array = new uint8_t[64];
         this->readIndex = 0;
         this->availableDataSize = 0;
 }

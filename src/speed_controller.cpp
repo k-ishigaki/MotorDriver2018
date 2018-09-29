@@ -26,15 +26,15 @@ SpeedController::SpeedController(const Encoder& leftEncoder, const Encoder& righ
         : leftEncoder(leftEncoder), rightEncoder(rightEncoder), leftBridge(leftBridge), rightBridge(rightBridge) {
             this->centerSpeedPID = new PIDController(K_CP, K_CI, K_CD);
             this->angularSpeedPID = new PIDController(K_AP, K_AI, K_AD);
-            targetCenterSpeed = targetAngularSpeed = 0;
-            lastTargetCenterSpeed = lastTargetAngularSpeed = 0;
+            this->targetCenterSpeed = this->targetAngularSpeed = 0;
+            this->lastTargetCenterSpeed = this->lastTargetAngularSpeed = 0;
         }
 
 void SpeedController::setTarget(float centerSpeed, float angularSpeed) {
-    lastTargetCenterSpeed = targetCenterSpeed;
-    targetCenterSpeed = centerSpeed;
-    lastTargetAngularSpeed = targetAngularSpeed;
-    targetAngularSpeed = angularSpeed * 1000;
+    this->lastTargetCenterSpeed = this->targetCenterSpeed;
+    this->targetCenterSpeed = centerSpeed;
+    this->lastTargetAngularSpeed = this->targetAngularSpeed;
+    this->targetAngularSpeed = angularSpeed * 1000;
 }
 
 void SpeedController::determineOutput() {
