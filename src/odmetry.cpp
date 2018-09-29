@@ -1,5 +1,6 @@
 #include "odmetry.hpp"
 
+#include "config.hpp"
 #include <math.h>
 
 // Point
@@ -58,7 +59,7 @@ float Vector::calcSignedAngularTo(const Vector& vector) const {
 }
 
 // Odmetry
-Odmetry::Odmetry(const Encoder& leftEncoder, const Encoder& rightEncoder, const float wheelTread) : leftEncoder(leftEncoder), rightEncoder(rightEncoder), wheelTread(wheelTread) {
+Odmetry::Odmetry(const Encoder& leftEncoder, const Encoder& rightEncoder) : leftEncoder(leftEncoder), rightEncoder(rightEncoder) {
     this->x = 0;
     this->y = 0;
     this->theta = 0;
@@ -68,7 +69,7 @@ void Odmetry::update() {
     auto leftDelta = this->leftEncoder.getIntegratedLength();
     auto rightDelta = this->rightEncoder.getIntegratedLength();
     // 角速度
-    float deltaTheta = (rightDelta - leftDelta) / this->wheelTread;
+    float deltaTheta = (rightDelta - leftDelta) / config::WheelTread;
 
     // 水平、垂直軸速度
     // 中間速度は先に計算する

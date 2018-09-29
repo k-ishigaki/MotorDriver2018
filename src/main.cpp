@@ -2,6 +2,7 @@
  * Motor Driver 2018
  */
 
+#include "config.hpp"
 #include "encoder.hpp"
 #include "log.hpp"
 #include "h_bridge.hpp"
@@ -179,9 +180,9 @@ SoftwareI2cInterrupt softwareI2cInterrupt;
 
 I2CBuffer i2cBuffer(i2cSlave, softwareI2cInterrupt, 0x08, 6);
 
-Odmetry odmetry(encoder0, encoder1, 180.0);
+Odmetry odmetry(encoder0, encoder1);
 
-SpeedController speedController(encoder0, encoder1, bridge0, bridge1);
+SpeedController speedController(encoder1, encoder0, bridge1, bridge0);
 
 struct odmetryData_t {
     int16_t odmetry_x = 0x5599;
@@ -263,7 +264,15 @@ void resetOdmetryData() {
 
 void updateTargetSpeed() {
     auto f = []() {
-        speedController.setTarget(targetSpeedData.left, 0);
+        auto leftSpeed = targetSpeedData.left;
+        auto rightSpeed = targetSpeedData.right;
+        leftSpeed = leftSpeed > 500 ? 500 : leftSpeed;
+        leftSpeed = leftSpeed < 0 ? 0 : leftSpeed;
+        rightSpeed = rightSpeed > 500 ? 500 : rightSpeed;
+        rightSpeed = rightSpeed < 0 ? 0 : rightSpeed;
+        auto centerSpeed = (leftSpeed + rightSpeed) / 2.0;
+        auto angularSpeed = (rightSpeed - leftSpeed) / config::WheelTread;
+        speedController.setTarget(centerSpeed, angularSpeed);
     };
     hardware::noInterrupt(+f);
 }

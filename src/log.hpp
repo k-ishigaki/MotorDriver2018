@@ -14,6 +14,7 @@ namespace application {
             Vervose,
             Info,
             Error,
+            None,
         };
 
         namespace impl {

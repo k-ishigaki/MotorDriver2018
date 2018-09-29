@@ -1,5 +1,6 @@
 #include "speed_controller.hpp"
 
+#include "config.hpp"
 #include "log.hpp"
 #include <math.h>
 
@@ -49,7 +50,7 @@ void SpeedController::determineOutput() {
                 centerSpeedPID->calcCorrectionValue(centerSpeedError)) /
         INTEGER_SCALE / 256;
     // 角速度項の計算
-    int measuredAngularSpeed = round((rightSpeed - leftSpeed) * 1000 / 180.0);
+    int measuredAngularSpeed = round((rightSpeed - leftSpeed) * 1000 / config::WheelTread);
     int targetAngularAcceleration =
         targetAngularSpeed - lastTargetAngularSpeed;
     int angularSpeedError = lastTargetAngularSpeed - measuredAngularSpeed;

@@ -40,7 +40,7 @@ class Vector {
 
 class Odmetry {
     public:
-        Odmetry(const Encoder& leftEncoder, const Encoder& rightEncoder, const float);
+        Odmetry(const Encoder& leftEncoder, const Encoder& rightEncoder);
         void update();
         void modifyDifference(const Vector&);
         Vector getMachineVector() const;
@@ -50,7 +50,6 @@ class Odmetry {
         float x;
         float y;
         float theta;
-        const float wheelTread;
 };
 
 #endif
