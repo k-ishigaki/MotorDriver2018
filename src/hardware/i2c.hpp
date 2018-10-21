@@ -24,17 +24,10 @@ class I2CSlave {
          */
         virtual Event getEvent() = 0;
 
-        enum class NextOperation {
-            FinishTransferring,
-            TransferLastByte,
-            TransferMoreThan1Byte,
-        };
         /**
          * Release CLK clock and start hardware operation.
-         *
-         * @param next operation for hardware
          */
-        virtual void releaseClock(NextOperation) = 0;
+        virtual void releaseClock() = 0;
 
         /**
          * Write a data to transmit buffer.

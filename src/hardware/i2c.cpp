@@ -62,29 +62,17 @@ template<class T> class I2CSlave_ : public I2CSlave {
                 case SlaveStatus::GeneralCallDataReceivedWithNACK:
                     return Event::LastDataReceived;
                 case SlaveStatus::StopOrRestartReceived:
-                    this->releaseClock(NextOperation::FinishTransferring);
+                    this->releaseClock();
                     return Event::Empty;
             }
             // elegal state
             return Event::Empty;
         }
 
-        void releaseClock(NextOperation operation) override {
-            switch (operation) {
-                case NextOperation::FinishTransferring:
-                    regs::TWCR.TWSTA = 0;
-                    regs::TWCR.TWSTO = 0;
-                    regs::TWCR.TWEA = 1;
-                    break;
-                case NextOperation::TransferLastByte:
-                    regs::TWCR.TWSTO = 0;
-                    regs::TWCR.TWEA = 0;
-                    break;
-                case NextOperation::TransferMoreThan1Byte:
-                    regs::TWCR.TWSTO = 0;
-                    regs::TWCR.TWEA = 1;
-                    break;
-            }
+        void releaseClock() override {
+            regs::TWCR.TWSTA = 0;
+            regs::TWCR.TWSTO = 0;
+            regs::TWCR.TWEA = 1;
             regs::TWCR.TWINT = 1;
         }
 
