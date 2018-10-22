@@ -336,7 +336,7 @@ void updateTargetRotate() {
             if (locusElement != nullptr) {
                 delete locusElement;
             }
-            auto radius = config::WheelTread / 1.4;
+            auto radius = config::WheelTread / 2;
             radius = theta < 0 ? -radius : radius;
             locusElement = new CurveLine(odmetry.getMachineVector(), radius, (float)theta / 1000.0);
         }
@@ -363,7 +363,7 @@ void loop() {
                 auto curvature = guide.getCurvature();
                 if (curvature == 0) {
                     vehicleController.setTarget(guide.getCurvature()
-                            , guide.getRemainingDistance(), speed, speed);
+                            , 1000, speed, speed);
                 } else {
                     vehicleController.setTarget(guide.getCurvature()
                             , guide.getRemainingDistance(), speed, 0);
