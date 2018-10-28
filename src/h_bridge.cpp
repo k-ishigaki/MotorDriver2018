@@ -57,7 +57,6 @@ void H_Bridge::changeDirection(Direction direction) {
             this->pin_0l.write(false);
             this->pin_1h.write(false);
             this->pin_1l.write(false);
-            log_i("Free");
             break;
         case Direction::Stop:
             this->compareMatchInterrupt0.disable();
@@ -69,7 +68,6 @@ void H_Bridge::changeDirection(Direction direction) {
             this->pin_0l.write(true);
             this->pin_1h.write(false);
             this->pin_1l.write(true);
-            log_i("Stop");
             break;
         case Direction::Forward:
             this->compareMatchInterrupt0.disable();
@@ -81,7 +79,6 @@ void H_Bridge::changeDirection(Direction direction) {
             this->pin_1l.write(true);
             this->compareMatchInterrupt1.enable();
             this->compareMatchInterrupt2.enable();
-            log_i("Forward");
             break;
         case Direction::Backward:
             this->compareMatchInterrupt1.disable();
@@ -93,7 +90,6 @@ void H_Bridge::changeDirection(Direction direction) {
             this->pin_1l.write(false);
             this->compareMatchInterrupt0.enable();
             this->compareMatchInterrupt2.enable();
-            log_i("Backward");
             break;
     }
     this->currentDirection = direction;
@@ -113,7 +109,6 @@ void H_Bridge::setDutyRatio(float ratio) {
             this->pwm_0h.setDutyCycle(count);
             break;
         default:
-            log_i("mode is not pwm, ignored");
             break;
     }
 }

@@ -1,7 +1,6 @@
 #include "speed_controller.hpp"
 
 #include "config.hpp"
-#include "log.hpp"
 #include <math.h>
 
 namespace {

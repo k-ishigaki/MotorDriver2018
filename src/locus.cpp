@@ -1,6 +1,5 @@
 #include "locus.hpp"
 
-#include "log.hpp"
 #include <math.h>
 
 // Guide
