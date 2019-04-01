@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/k-ishigaki/neovim-docker
+	branch = master
+	commit = e7b7299678bcd556f4f5188ffbda200df79aac0a
+	parent = 7bbad2f5657d35a326d2b9200a5b1a543ec4bff8
+	method = merge
+	cmdver = 0.4.0
