@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/k-ishigaki/ccls-docker
+	branch = master
+	commit = ed1d775f21d7b5d9a52291d024d46af9b8c98027
+	parent = 37981e4a5e0b1b5757afb98fe1b8416de5186929
+	method = merge
+	cmdver = 0.4.0
