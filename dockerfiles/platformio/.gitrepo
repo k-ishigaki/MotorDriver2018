@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/k-ishigaki/platformio-docker
+	branch = master
+	commit = 71715e9f17803f51e9b9b4c869b6942198f349c7
+	parent = f564ff9e413e103bbfd36e2cbd98b7ae361d4ed6
+	method = merge
+	cmdver = 0.4.0
