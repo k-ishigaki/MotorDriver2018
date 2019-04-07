@@ -1,6 +1,6 @@
 %clang
-%%c -std=c99
-%%cpp -std=c++11
+%c -std=c99
+%cpp -std=c++11
 
 # Defined
 -D__AVR_ATmega328PB__

@@ -10,11 +10,11 @@ services:
             - platformio:/root/.platformio
         stdin_open: true
 
-    ccls:
-        image: ccls
-        container_name: ccls
+    cquery:
+        image: cquery
+        container_name: cquery
         build:
-            context: ./dockerfiles/ccls
+            context: ./dockerfiles/cquery
         depends_on:
             - platformio
         volumes:
@@ -27,9 +27,9 @@ services:
         build:
             context: ./dockerfiles/neovim
             args:
-                cmds: "platformio:platformio ccls:ccls"
+                cmds: "platformio:platformio cquery:cquery"
         depends_on:
-            - ccls
+            - cquery
         volumes:
             - ./:/root/project_root
             - platformio:/root/.platformio
