@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/k-ishigaki/cquery-docker.git
 	branch = master
-	commit = bb4d4e460d65b8aed673fccaf812a5f191bf9604
-	parent = 5e2ffd9b0054c56bae6f799fdf89c9a7ba260c69
+	commit = c182e351ac673e54fe63c7a49037bc896971aa12
+	parent = 8e85fff6d50e6ecc6eb2ed1bc55dd8930bc966da
 	method = merge
 	cmdver = 0.4.0
