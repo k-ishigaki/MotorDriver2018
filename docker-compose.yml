@@ -1,7 +1,6 @@
 version: "3"
 services:
     platformio:
-        image: platformio
         container_name: platformio
         build:
             context: ./dockerfiles/platformio
@@ -11,7 +10,6 @@ services:
         stdin_open: true
 
     cquery:
-        image: cquery
         container_name: cquery
         build:
             context: ./dockerfiles/cquery
@@ -23,7 +21,6 @@ services:
         stdin_open: true
 
     main:
-        image: main
         build:
             context: ./dockerfiles/neovim
             args:
