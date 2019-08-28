@@ -4,9 +4,9 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/k-ishigaki/cquery-docker.git
+	remote = https://github.com/k-ishigaki/dotfiles
 	branch = master
-	commit = 54495a341bba9a3b550fe52be45ad73668ce9658
-	parent = 615fb486203f9ddc2fcb4b9144a8e8b37a9a2f2e
+	commit = 8013b6fa72a1b2ee95394cb2cebbfdfb2230ec7c
+	parent = 19ef07b3a670e0d779691b49e4a9879cccfbdc0d
 	method = merge
 	cmdver = 0.4.0

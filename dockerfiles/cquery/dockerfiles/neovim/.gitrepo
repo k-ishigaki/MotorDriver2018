@@ -4,9 +4,9 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/k-ishigaki/cquery-docker.git
+	remote = https://github.com/k-ishigaki/neovim-docker
 	branch = master
-	commit = 54495a341bba9a3b550fe52be45ad73668ce9658
-	parent = 615fb486203f9ddc2fcb4b9144a8e8b37a9a2f2e
+	commit = e12c210f121c80fabfaef21f7164ccdaa0b5aefb
+	parent = 4e59a7ec0a90a4f4d054e2d2c67ab114ed7796d4
 	method = merge
 	cmdver = 0.4.0
