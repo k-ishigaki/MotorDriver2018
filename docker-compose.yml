@@ -20,11 +20,18 @@ services:
             - platformio:/root/.platformio
         stdin_open: true
 
+    docker-langserver:
+        image: rcjsuen/docker-langserver
+        volumes:
+            - ./:/root/project_root
+        stdin_open: true
+        entrypoint: /bin/ash
+
     main:
         build:
             context: ./dockerfiles/neovim
             args:
-                cmds: "platformio:platformio cquery:cquery"
+                cmds: "motordriver2018_docker-langserver_1:/docker-langserver/bin/docker-langserver platformio:platformio cquery:cquery"
         depends_on:
             - cquery
         volumes:
