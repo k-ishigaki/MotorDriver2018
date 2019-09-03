@@ -1,7 +1,6 @@
 version: "3"
 services:
     platformio:
-        container_name: platformio
         build:
             context: ./dockerfiles/platformio
         volumes:
@@ -10,7 +9,6 @@ services:
         stdin_open: true
 
     cquery:
-        container_name: cquery
         build:
             context: ./dockerfiles/cquery
         depends_on:
@@ -31,7 +29,10 @@ services:
         build:
             context: ./dockerfiles/neovim
             args:
-                cmds: "motordriver2018_docker-langserver_1:/docker-langserver/bin/docker-langserver platformio:platformio cquery:cquery"
+                cmds:
+                    ${COMPOSE_PROJECT_NAME}_platformio_1:platformio
+                    ${COMPOSE_PROJECT_NAME}_cquery_1:cquery
+                    ${COMPOSE_PROJECT_NAME}_docker-langserver_1:/docker-langserver/bin/docker-langserver
         depends_on:
             - cquery
         volumes:
