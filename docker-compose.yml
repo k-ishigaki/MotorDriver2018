@@ -11,8 +11,6 @@ services:
     cquery:
         build:
             context: ./dockerfiles/cquery
-        depends_on:
-            - platformio
         volumes:
             - ./:/root/project_root
             - platformio:/root/.platformio
@@ -33,8 +31,6 @@ services:
                     ${COMPOSE_PROJECT_NAME}_platformio_1:platformio
                     ${COMPOSE_PROJECT_NAME}_cquery_1:cquery
                     ${COMPOSE_PROJECT_NAME}_docker-langserver_1:/docker-langserver/bin/docker-langserver
-        depends_on:
-            - cquery
         volumes:
             - ./:/root/project_root
             - platformio:/root/.platformio
