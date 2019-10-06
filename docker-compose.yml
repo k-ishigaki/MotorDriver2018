@@ -2,7 +2,7 @@ version: "3"
 services:
     platformio:
         build:
-            context: ./dockerfiles/platformio
+            context: ./platformio-docker
         volumes:
             - ./:/root/project_root
             - platformio:/root/.platformio
@@ -10,7 +10,7 @@ services:
 
     cquery:
         build:
-            context: ./dockerfiles/cquery
+            context: ./cquery-docker
         volumes:
             - ./:/root/project_root
             - platformio:/root/.platformio
@@ -25,7 +25,7 @@ services:
 
     main:
         build:
-            context: ./dockerfiles/neovim
+            context: ./neovim-docker
             args:
                 cmds:
                     ${COMPOSE_PROJECT_NAME}_platformio_1:platformio
