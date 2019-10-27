@@ -7,7 +7,7 @@ A motor driver's source code for [Robot Triathlon](http://www.robot-triathlon.or
 Currently, no board specification are provided.
 
 - Hardware
-  - Micro Controller: [Microchip ATmega328PB](https://www.microchip.com/wwwproducts/en/ATmega328PB)
+  - Microcontroller: [Microchip ATmega328PB](https://www.microchip.com/wwwproducts/en/ATmega328PB)
   - Programmer: [Atmel-ICE](https://www.microchip.com/DevelopmentTools/ProductDetails/ATATMEL-ICE) 
 - Software
   - Development Environment: [Docker Desktop for Mac / Windows](https://www.docker.com/products/docker-desktop)
