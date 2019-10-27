@@ -17,8 +17,6 @@
 #include "framework/serial_buffer.hpp"
 #include "hardware/hardware.hpp"
 
-#include <util/delay.h>
-
 using namespace hardware;
 using namespace application;
 
