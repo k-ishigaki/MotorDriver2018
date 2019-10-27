@@ -5,7 +5,7 @@
 extern ADConverter* getADConverter();
 
 namespace hardware {
-    namespace SystemClockPrescaler {
+    namespace system_clock_prescaler {
         void configure(DivisionFactor factor) {
             CLKPR = _BV(CLKPCE);
             CLKPR = static_cast<uint8_t>(factor);

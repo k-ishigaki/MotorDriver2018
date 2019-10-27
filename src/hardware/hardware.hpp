@@ -13,7 +13,7 @@
 #include "timer.hpp"
 
 namespace hardware {
-    namespace SystemClockPrescaler {
+    namespace system_clock_prescaler {
         /**
          * Division Factor for system clock prescaler.
          */

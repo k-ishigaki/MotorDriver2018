@@ -230,7 +230,7 @@ LocusElement* locusElement = nullptr;
 
 void setup() {
     // system clock freq = 8MHz div 1
-    SystemClockPrescaler::configure(SystemClockPrescaler::DivisionFactor::Num1);
+    system_clock_prescaler::configure(system_clock_prescaler::DivisionFactor::Num1);
 
     // configure log module
     auto putCharImpl = [](char data) { serialBuffer.write(data); };
